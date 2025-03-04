@@ -7,14 +7,14 @@ public class Order {
     private final Long id;
     private final LocalDate dateOrder;
     private final LocalDate dateDelivery;
-    private final String statuc;
+    private final String status;
     private final Set<Product> products;
 
-    public Order(Long id, LocalDate dateOrder, LocalDate dateDelivery, String statuc, Set<Product> products) {
+    public Order(Long id, LocalDate dateOrder, LocalDate dateDelivery, String status, Set<Product> products) {
         this.id = id;
         this.dateOrder = dateOrder;
         this.dateDelivery = dateDelivery;
-        this.statuc = statuc;
+        this.status = status;
         this.products = products;
     }
 
@@ -30,11 +30,24 @@ public class Order {
         return dateDelivery;
     }
 
-    public String getStatuc() {
-        return statuc;
+    public String getStatus() {
+        return status;
     }
 
     public Set<Product> getProducts() {
         return products;
     }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", dateOrder=" + dateOrder +
+                ", dateDelivery=" + dateDelivery +
+                ", status='" + status + '\'' +
+                ", products=" + products +
+                '}';
+    }
+
+     
 }
