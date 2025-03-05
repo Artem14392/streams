@@ -31,5 +31,13 @@ public class Customer {
         this.orders = orders;
     }
 
-
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", level=" + level +
+                ", orders=" + orders +
+                '}';
+    }
 }

@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.*;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -55,6 +57,39 @@ public class App {
         Map<String, Double> task10 = doTask10(customers);
         task10.forEach((s, aDouble) -> System.out.println(s + aDouble));
 
+        System.out.println("задание 11");
+        Map<Long, Integer> task11 = doTask11(customers);
+        task11.keySet()
+                .forEach(id ->
+                        System.out.println("Id:" + id.toString()
+                                + " Количество:" + task11.get(id).toString() + " "));
+
+
+        System.out.println("задание: 12");
+        Map<Customer, List<Order>> task12 = doTask12(customers);
+        task12.keySet()
+                .forEach(customer ->
+                                System.out.println("customer:" + customer.toString()
+                                + " заказы:" + task12.get(customer).toString() + " "));
+
+        System.out.println("задание: 13");
+        Map<Order, Double> task13 = doTask13(customers);
+        task13.forEach(
+                (order, aDouble) -> System.out.println(order.toString() + "сумма продуктов заказа: " + aDouble)
+        );
+
+        System.out.println("задание: 14");
+        Map<String, List<String>> task14 = doTask14(customers);
+        task14.keySet()
+                .forEach(
+                        s -> System.out.println("категория: " + s + "название товаров: " + task14.get(s))
+                );
+
+        System.out.println("Задание 15:");
+        Map<String, Product> task15 = doTask15(customers);
+        task15.keySet()
+                .forEach(category -> System.out.printf(
+                        "Категория %s: %s;\n", category, task15.get(category).toString()));
     }
     private static Set<Product> doTask1(Set<Customer> customers){
         return customers.stream()
@@ -195,6 +230,47 @@ public class App {
         statisticData.put("кол-во: ", count);
 
         return statisticData;
+    }
+
+    private static Map<Long, Integer> doTask11(Set<Customer> customers){
+        Map<Long, Integer> mapOrderCount = new HashMap<>();
+        customers.stream()
+                .flatMap(c -> c.getOrders().stream())
+                .forEach( o -> mapOrderCount.put(o.getId(), o.getProducts().size()));
+        return mapOrderCount;
+    }
+
+    private static Map<Customer, List<Order>> doTask12(Set<Customer> customers){
+        Map<Customer, List<Order>> mapCustomers = new HashMap<>();
+        customers.forEach(c -> mapCustomers.put(c, c.getOrders().stream().toList()));
+        return mapCustomers;
+    }
+
+    private static Map<Order, Double> doTask13(Set<Customer> customers){
+        Map<Order, Double> mapOrder = new HashMap<>();
+        customers.stream()
+                .flatMap(c -> c.getOrders().stream())
+                .forEach(o -> mapOrder.put(o, o.getProducts().stream().mapToDouble(p -> p.getPrice().doubleValue()).sum()));
+        return mapOrder;
+    }
+
+    private static Map<String, List<String>> doTask14(Set<Customer> customers){
+        Map<String, List<String>> listCategory = new HashMap<>();
+        customers.stream()
+                .flatMap(c -> c.getOrders().stream())
+                .flatMap(o -> o.getProducts().stream())
+                .forEach(p -> listCategory
+                        .computeIfAbsent(p.getCategory(), k -> new ArrayList<>())
+                        .add(p.getName())
+                );
+        return listCategory;
+    }
+
+    private static Map<String, Product> doTask15(Set<Customer> customers){
+        return customers.stream()
+                .flatMap(c -> c.getOrders().stream())
+                .flatMap(o -> o.getProducts().stream())
+                .collect(Collectors.toMap(Product::getCategory, Function.identity(), BinaryOperator.maxBy(Comparator.comparing(Product::getPrice))));
     }
 
 }
